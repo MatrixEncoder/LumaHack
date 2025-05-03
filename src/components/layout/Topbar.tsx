@@ -70,14 +70,14 @@ const Topbar: React.FC<TopbarProps> = ({ className }) => {
         
         <button
           className="flex items-center justify-center h-8 w-8 rounded-full bg-black bg-opacity-70 text-white"
-          onClick={() => alert('Notifications coming soon!')}
+          onClick={() => navigate('/notifications')}
         >
           <Bell size={18} />
         </button>
         
         <button
           className="flex items-center justify-center h-8 w-8 rounded-full bg-black bg-opacity-70 text-white"
-          onClick={() => alert('Account management coming soon!')}
+          onClick={() => navigate('/account')}
         >
           <User size={18} />
         </button>

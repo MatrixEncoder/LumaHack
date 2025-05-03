@@ -12,20 +12,22 @@ const MusicPlayer: React.FC = () => {
   const { 
     currentSong, 
     isPlaying, 
-    progress, 
-    volume,
     togglePlay, 
     nextSong, 
-    prevSong,
-    setProgress,
-    setVolume
+    prevSong
   } = usePlayback();
+
+  // Local state for progress
+  const [progress, setProgress] = useState(0);
+
+  // Local state for volume and mute
+  const [volume, setVolume] = useState(70);
+  const [isMuted, setIsMuted] = useState(false);
+  const [prevVolume, setPrevVolume] = useState(70);
   
   const [isDraggingProgress, setIsDraggingProgress] = useState(false);
   const [tempProgress, setTempProgress] = useState(progress);
   const [isDraggingVolume, setIsDraggingVolume] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [prevVolume, setPrevVolume] = useState(volume);
   
   const progressRef = useRef<HTMLDivElement>(null);
   const volumeRef = useRef<HTMLDivElement>(null);
@@ -39,6 +41,14 @@ const MusicPlayer: React.FC = () => {
       audio.pause();
     }
   }, [isPlaying, currentSong]);
+
+  // Sync volume and mute state to audio element
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = Math.max(0, Math.min(1, isMuted ? 0 : volume / 100));
+    audio.muted = isMuted;
+  }, [volume, isMuted]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -129,8 +139,81 @@ const MusicPlayer: React.FC = () => {
     return <Volume2 />;
   };
   
+  // State for modals
+  const [showQueue, setShowQueue] = useState(false);
+  const [showDevices, setShowDevices] = useState(false);
+
+  // Shuffle and repeat refs for logic (do not trigger re-render)
+  const shuffleRef = useRef(false);
+  const repeatRef = useRef(false);
+  // Local UI state for color only
+  const [shuffleUI, setShuffleUI] = useState(false);
+  const [repeatUI, setRepeatUI] = useState(false);
+
   return (
     <>
+      {/* Queue Modal */}
+      {showQueue && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end md:items-center justify-center z-50">
+          <div className="bg-[#181818] w-full md:w-96 rounded-t-2xl md:rounded-xl shadow-lg p-6 max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-white">Queue</h3>
+              <button onClick={() => setShowQueue(false)} className="text-[#b3b3b3] hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            {/* Simulated queue, show currentSong and up to 4 more songs */}
+            {currentSong ? (
+              <ul className="space-y-3 overflow-y-auto">
+                <li className="flex items-center space-x-3 bg-[#232323] rounded p-2">
+                  <img src={currentSong.cover} alt={currentSong.title} className="w-10 h-10 rounded object-cover" />
+                  <div>
+                    <div className="font-semibold text-white">{currentSong.title}</div>
+                    <div className="text-[#b3b3b3] text-xs">{currentSong.artist}</div>
+                  </div>
+                  <span className="ml-auto text-xs px-2 py-1 bg-[#1DB954] text-black rounded-full">Now Playing</span>
+                </li>
+                {/* Simulate next 4 songs in the queue */}
+                {[1,2,3,4].map(i => (
+                  <li key={i} className="flex items-center space-x-3 p-2">
+                    <div className="w-10 h-10 rounded bg-[#232323] flex items-center justify-center text-[#b3b3b3]">♪</div>
+                    <div>
+                      <div className="font-semibold text-white">Upcoming Song {i}</div>
+                      <div className="text-[#b3b3b3] text-xs">Artist {i}</div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="text-[#b3b3b3]">Queue is empty.</div>
+            )}
+          </div>
+        </div>
+      )}
+      {/* Devices Modal */}
+      {showDevices && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end md:items-center justify-center z-50">
+          <div className="bg-[#181818] w-full md:w-80 rounded-t-2xl md:rounded-xl shadow-lg p-6 flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-white">Connect to a device</h3>
+              <button onClick={() => setShowDevices(false)} className="text-[#b3b3b3] hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <ul className="space-y-4">
+              <li className="flex items-center space-x-3 p-2 rounded bg-[#232323]">
+                <Laptop size={18} className="text-[#1DB954]" />
+                <span className="text-white font-semibold">This device</span>
+                <span className="ml-auto text-xs px-2 py-1 bg-[#1DB954] text-black rounded-full">Active</span>
+              </li>
+              <li className="flex items-center space-x-3 p-2 rounded hover:bg-[#232323] cursor-pointer">
+                <Laptop size={18} className="text-[#b3b3b3]" />
+                <span className="text-white">Living Room Speaker</span>
+              </li>
+              <li className="flex items-center space-x-3 p-2 rounded hover:bg-[#232323] cursor-pointer">
+                <Laptop size={18} className="text-[#b3b3b3]" />
+                <span className="text-white">Bedroom TV</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      )}
       {/* Audio element for playback */}
       {currentSong && currentSong.audio && (
         <audio
@@ -140,9 +223,9 @@ const MusicPlayer: React.FC = () => {
           onEnded={nextSong}
         />
       )}
-      <div className="flex items-center justify-between h-20 px-4 bg-[#181818] border-t border-[#282828] text-white">
+      <div className="flex items-center justify-between h-20 px-4 bg-[#181818] border-t border-[#282828] text-white fixed bottom-0 left-0 right-0 z-50 md:static md:h-20 md:px-4 px-2 py-2 overflow-visible" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       {/* Now playing */}
-      <div className="flex items-center w-1/4">
+      <div className="flex items-center w-1/4 min-w-0 max-w-[40vw] sm:max-w-none">
         {currentSong ? (
           <>
             <div className="h-14 w-14 mr-3 flex-shrink-0">
@@ -165,9 +248,17 @@ const MusicPlayer: React.FC = () => {
       </div>
       
       {/* Playback controls */}
-      <div className="flex flex-col items-center justify-center w-2/4">
+      <div className="flex flex-col items-center justify-center w-2/4 min-w-0 max-w-[60vw] sm:max-w-none">
         <div className="flex items-center justify-center mb-2 space-x-4">
-          <button className="player-control">
+          <button
+            className="player-control"
+            onClick={() => {
+              shuffleRef.current = !shuffleRef.current;
+              setShuffleUI(u => !u);
+            }}
+            style={{ color: shuffleUI ? '#1DB954' : 'white' }}
+            aria-pressed={shuffleUI}
+          >
             <Shuffle size={18} />
           </button>
           <button onClick={prevSong} className="player-control">
@@ -182,7 +273,15 @@ const MusicPlayer: React.FC = () => {
           <button onClick={nextSong} className="player-control">
             <SkipForward size={18} />
           </button>
-          <button className="player-control">
+          <button
+            className="player-control"
+            onClick={() => {
+              repeatRef.current = !repeatRef.current;
+              setRepeatUI(u => !u);
+            }}
+            style={{ color: repeatUI ? '#1DB954' : 'white' }}
+            aria-pressed={repeatUI}
+          >
             <Repeat size={18} />
           </button>
         </div>
@@ -230,11 +329,11 @@ const MusicPlayer: React.FC = () => {
       </div>
       
       {/* Volume controls */}
-      <div className="flex items-center justify-end w-1/4 space-x-3">
-        <button className="player-control">
+      <div className="flex items-center justify-end w-1/4 min-w-0 max-w-[40vw] sm:max-w-none space-x-2 md:space-x-3">
+        <button className="player-control" onClick={() => setShowQueue(true)}>
           <ListMusic size={18} />
         </button>
-        <button className="player-control">
+        <button className="player-control" onClick={() => setShowDevices(true)}>
           <Laptop size={18} />
         </button>
         

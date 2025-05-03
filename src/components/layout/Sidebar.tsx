@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Search, Library, PlusSquare, Heart, Download } from 'lucide-react';
+import { Home, Search, Library, PlusSquare, Heart, Download, User } from 'lucide-react';
 import classNames from 'classnames';
 import { usePlaylist } from '../../context/PlaylistContext';
 
@@ -65,20 +65,49 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
           }
         >
           <Library className="mr-4 h-6 w-6" />
-          <span>Your Library</span>
+          <span>Library</span>
+        </NavLink>
+
+        <NavLink
+          to="/account"
+          className={({ isActive }) =>
+            classNames(
+              "flex items-center py-2 px-4 rounded-md font-medium transition-colors",
+              isActive ? "bg-[#282828] text-white" : "text-[#b3b3b3] hover:text-white"
+            )
+          }
+        >
+          <User className="mr-4 h-6 w-6" />
+          <span>Account</span>
         </NavLink>
       </nav>
       
       <div className="px-2 pt-4 mt-2 space-y-1 border-t border-[#282828]">
-        <button className="flex items-center py-2 px-4 rounded-md font-medium text-[#b3b3b3] hover:text-white transition-colors">
+        <NavLink
+          to="/create-playlist"
+          className={({ isActive }) =>
+            classNames(
+              "flex items-center py-2 px-4 rounded-md font-medium transition-colors",
+              isActive ? "bg-[#282828] text-white" : "text-[#b3b3b3] hover:text-white"
+            )
+          }
+        >
           <PlusSquare className="mr-4 h-6 w-6" />
           <span>Create Playlist</span>
-        </button>
+        </NavLink>
         
-        <button className="flex items-center py-2 px-4 rounded-md font-medium text-[#b3b3b3] hover:text-white transition-colors">
+        <NavLink
+          to="/liked-songs"
+          className={({ isActive }) =>
+            classNames(
+              "flex items-center py-2 px-4 rounded-md font-medium transition-colors",
+              isActive ? "bg-[#282828] text-white" : "text-[#b3b3b3] hover:text-white"
+            )
+          }
+        >
           <Heart className="mr-4 h-6 w-6" />
           <span>Liked Songs</span>
-        </button>
+        </NavLink>
       </div>
       
       <div className="flex-1 overflow-y-auto px-2">

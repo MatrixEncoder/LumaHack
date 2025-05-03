@@ -43,12 +43,8 @@ export interface AiPlaylistType {
 export interface PlaybackContextType {
   currentSong: SongType | null;
   isPlaying: boolean;
-  progress: number;
-  volume: number;
   togglePlay: () => void;
   nextSong: () => void;
   prevSong: () => void;
-  setProgress: (value: number) => void;
-  setVolume: (value: number) => void;
   playSong: (song: SongType) => void;
 }
