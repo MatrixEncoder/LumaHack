@@ -1,112 +1,91 @@
-import { AiPlaylistSongType, AiPlaylistType } from '../types';
+import {AiPlaylistType } from '../types';
+
 
 export const generatePlaylistFromMood = async (mood: string): Promise<AiPlaylistType | null> => {
-  try {
-    // Lowercase and trimmed mood for matching
-    const moodInput = mood.trim().toLowerCase();
-    if (!moodInput) return null;
-
-    // Define mood pools
-    const moodPools: Record<string, AiPlaylistSongType[]> = {
-      happy: [
-        { title: "Can't Stop the Feeling!", artist: "Justin Timberlake" },
-        { title: "Happy", artist: "Pharrell Williams" },
-        { title: "Uptown Funk", artist: "Mark Ronson ft. Bruno Mars" },
-        { title: "Walking on Sunshine", artist: "Katrina and The Waves" },
-        { title: "Good as Hell", artist: "Lizzo" },
-        { title: "I Gotta Feeling", artist: "Black Eyed Peas" },
-        { title: "High Hopes", artist: "Panic! At The Disco" },
-        { title: "Electric Feel", artist: "MGMT" },
-        { title: "Best Day Of My Life", artist: "American Authors" },
-        { title: "Firework", artist: "Katy Perry" }
-      ],
-      energetic: [
-        { title: "Titanium", artist: "David Guetta ft. Sia" },
-        { title: "Stronger", artist: "Kanye West" },
-        { title: "Don't Stop Me Now", artist: "Queen" },
-        { title: "Feel This Moment", artist: "Pitbull ft. Christina Aguilera" },
-        { title: "On Top Of The World", artist: "Imagine Dragons" },
-        { title: "Let's Go", artist: "Calvin Harris ft. Ne-Yo" },
-        { title: "Can't Hold Us", artist: "Macklemore & Ryan Lewis" },
-        { title: "Levels", artist: "Avicii" },
-        { title: "Turn Down for What", artist: "DJ Snake & Lil Jon" },
-        { title: "Bangarang", artist: "Skrillex" }
-      ],
-      sad: [
-        { title: "Someone Like You", artist: "Adele" },
-        { title: "Fix You", artist: "Coldplay" },
-        { title: "All Too Well", artist: "Taylor Swift" },
-        { title: "Skinny Love", artist: "Bon Iver" },
-        { title: "Hurt", artist: "Johnny Cash" },
-        { title: "When The Party's Over", artist: "Billie Eilish" },
-        { title: "Everybody Hurts", artist: "R.E.M." },
-        { title: "Tears In Heaven", artist: "Eric Clapton" },
-        { title: "The Night We Met", artist: "Lord Huron" },
-        { title: "Let Her Go", artist: "Passenger" }
-      ],
-      heartbroken: [
-        { title: "Back to December", artist: "Taylor Swift" },
-        { title: "Someone You Loved", artist: "Lewis Capaldi" },
-        { title: "Un-break My Heart", artist: "Toni Braxton" },
-        { title: "Too Good at Goodbyes", artist: "Sam Smith" },
-        { title: "Let It Go", artist: "James Bay" },
-        { title: "We Don't Talk Anymore", artist: "Charlie Puth" },
-        { title: "Love The Way You Lie", artist: "Eminem ft. Rihanna" },
-        { title: "Happier", artist: "Ed Sheeran" },
-        { title: "Somebody That I Used to Know", artist: "Gotye" },
-        { title: "Irreplaceable", artist: "Beyoncé" }
-      ],
-      chill: [
-        { title: "Sunday Morning", artist: "Maroon 5" },
-        { title: "Dreams", artist: "Fleetwood Mac" },
-        { title: "Banana Pancakes", artist: "Jack Johnson" },
-        { title: "Redbone", artist: "Childish Gambino" },
-        { title: "Cigarette Daydreams", artist: "Cage The Elephant" },
-        { title: "Watermelon Sugar", artist: "Harry Styles" },
-        { title: "Landslide", artist: "Fleetwood Mac" },
-        { title: "3 Nights", artist: "Dominic Fike" },
-        { title: "Budapest", artist: "George Ezra" },
-        { title: "Location", artist: "Khalid" }
-      ],
-      relax: [
-        { title: "Weightless", artist: "Marconi Union" },
-        { title: "Holocene", artist: "Bon Iver" },
-        { title: "Sunset Lover", artist: "Petit Biscuit" },
-        { title: "Bloom", artist: "ODESZA" },
-        { title: "Rivers and Roads", artist: "The Head and the Heart" },
-        { title: "Sunset", artist: "The Midnight" },
-        { title: "Lost in Japan", artist: "Shawn Mendes" },
-        { title: "Ocean Eyes", artist: "Billie Eilish" },
-        { title: "Cherry Wine", artist: "Hozier" },
-        { title: "Home", artist: "Edward Sharpe & The Magnetic Zeros" }
-      ]
-    };
-
-    // Find which mood pool matches
-    let matchedMood = Object.keys(moodPools).find(moodKey => moodInput.includes(moodKey));
-    if (!matchedMood) {
-      // If no mood matches, return null for garbage input
-      return null;
-    }
-    // Shuffle and pick 8 random songs from the matched mood pool
-    const pool = [...moodPools[matchedMood]];
-    for (let i = pool.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [pool[i], pool[j]] = [pool[j], pool[i]];
-    }
-    const mockSongs = pool.slice(0, 8);
-    const playlistTitle = `${mood.charAt(0).toUpperCase() + mood.slice(1)} Vibes`;
-    return {
-      title: playlistTitle,
-      mood: mood,
-      songs: mockSongs,
-      createdAt: new Date().toISOString(),
-      id: Math.random().toString(36).substring(2, 9)
-    };
-  } catch (error) {
-    console.error("Error generating playlist:", error);
-    return null;
-  }
+  // MOCKED RESPONSE for hackathon demo (frontend-only, no CORS/API key issues)
+  // You can expand this with mood-specific playlists if desired
+  const moodSongs: Record<string, { title: string, artist: string }[]> = {
+    happy: [
+      { title: "Happy", artist: "Pharrell Williams" },
+      { title: "Uptown Funk", artist: "Mark Ronson ft. Bruno Mars" },
+      { title: "Can't Stop the Feeling!", artist: "Justin Timberlake" },
+      { title: "Shut Up and Dance", artist: "WALK THE MOON" },
+      { title: "Good as Hell", artist: "Lizzo" },
+      { title: "On Top of the World", artist: "Imagine Dragons" },
+      { title: "Best Day of My Life", artist: "American Authors" },
+      { title: "Firework", artist: "Katy Perry" },
+      { title: "Walking on Sunshine", artist: "Katrina & The Waves" },
+      { title: "Happy Now", artist: "Zedd & Elley Duhé" }
+    ],
+    sad: [
+      { title: "Someone Like You", artist: "Adele" },
+      { title: "Fix You", artist: "Coldplay" },
+      { title: "Let Her Go", artist: "Passenger" },
+      { title: "Yesterday", artist: "The Beatles" },
+      { title: "Skinny Love", artist: "Birdy" },
+      { title: "The Night We Met", artist: "Lord Huron" },
+      { title: "Say Something", artist: "A Great Big World & Christina Aguilera" },
+      { title: "All I Want", artist: "Kodaline" },
+      { title: "Happier", artist: "Ed Sheeran" },
+      { title: "Jealous", artist: "Labrinth" }
+    ],
+    energetic: [
+      { title: "Stronger", artist: "Kanye West" },
+      { title: "Titanium", artist: "David Guetta ft. Sia" },
+      { title: "Don't Start Now", artist: "Dua Lipa" },
+      { title: "Can't Hold Us", artist: "Macklemore & Ryan Lewis" },
+      { title: "Feel This Moment", artist: "Pitbull ft. Christina Aguilera" },
+      { title: "Levels", artist: "Avicii" },
+      { title: "Bang Bang", artist: "Jessie J, Ariana Grande, Nicki Minaj" },
+      { title: "Turn Down for What", artist: "DJ Snake & Lil Jon" },
+      { title: "Pump It", artist: "The Black Eyed Peas" },
+      { title: "Dance Monkey", artist: "Tones and I" }
+    ],
+    chill: [
+      { title: "Sunflower", artist: "Post Malone & Swae Lee" },
+      { title: "Location", artist: "Khalid" },
+      { title: "Electric Feel", artist: "MGMT" },
+      { title: "Sunday Best", artist: "Surfaces" },
+      { title: "Riptide", artist: "Vance Joy" },
+      { title: "Lost in Japan", artist: "Shawn Mendes" },
+      { title: "Banana Pancakes", artist: "Jack Johnson" },
+      { title: "Put It All on Me", artist: "Ed Sheeran ft. Ella Mai" },
+      { title: "Ocean Eyes", artist: "Billie Eilish" },
+      { title: "Budapest", artist: "George Ezra" }
+    ],
+    heartbroken: [
+      { title: "Someone You Loved", artist: "Lewis Capaldi" },
+      { title: "Back to December", artist: "Taylor Swift" },
+      { title: "Let Me Down Slowly", artist: "Alec Benjamin" },
+      { title: "Lose You to Love Me", artist: "Selena Gomez" },
+      { title: "I Will Always Love You", artist: "Whitney Houston" },
+      { title: "All I Want", artist: "Kodaline" },
+      { title: "When I Was Your Man", artist: "Bruno Mars" },
+      { title: "Too Good at Goodbyes", artist: "Sam Smith" },
+      { title: "Un-break My Heart", artist: "Toni Braxton" },
+      { title: "Let It Go", artist: "James Bay" }
+    ],
+    relax: [
+      { title: "Weightless", artist: "Marconi Union" },
+      { title: "Holocene", artist: "Bon Iver" },
+      { title: "River Flows In You", artist: "Yiruma" },
+      { title: "Bloom", artist: "The Paper Kites" },
+      { title: "Sunset Lover", artist: "Petit Biscuit" },
+      { title: "Breathe Me", artist: "Sia" },
+      { title: "Cherry Wine", artist: "Hozier" },
+      { title: "Lost Cause", artist: "Billie Eilish" },
+      { title: "Ophelia", artist: "The Lumineers" },
+      { title: "The Night We Met", artist: "Lord Huron" }
+    ]
+  };
+  const songs = moodSongs[mood.toLowerCase()] || moodSongs["happy"];
+  return {
+    title: `${mood.charAt(0).toUpperCase() + mood.slice(1)} Vibes`,
+    mood,
+    songs,
+    createdAt: new Date().toISOString(),
+    id: Math.random().toString(36).slice(2),
+  };
 };
 
 // Utility to convert mock playlist to actual playlist with cover images
