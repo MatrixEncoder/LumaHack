@@ -31,7 +31,7 @@ const AiMoodPlaylist: React.FC = () => {
   }
 
   return (
-    <div className="max-w-xl mx-auto mt-12 bg-[#181818] rounded-lg shadow-lg p-8 text-white pb-28">
+    <div className="max-w-xl mx-auto mt-12 bg-[#181818] rounded-lg shadow-lg p-8 text-white pb-52">
       <h2 className="text-2xl font-bold mb-6">AI Mood Playlist Generator</h2>
       <div className="flex items-center mb-6 space-x-4">
         <input
@@ -64,6 +64,8 @@ const AiMoodPlaylist: React.FC = () => {
           </ul>
         </div>
       )}
+      {/* Spacer for music player bar */}
+      <div style={{height: '120px'}} />
     </div>
   );
 };
