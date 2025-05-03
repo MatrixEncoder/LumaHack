@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-
-// TODO: Replace with your real Gemini API key for production/demo
-const GEMINI_API_KEY = "AIzaSyDWTQQ3LeC34xS-poo7JaCL70iUjeITtzU";
+import { generatePlaylistFromMood } from '../services/geminiService';
 
 interface Song {
   title: string;
@@ -19,33 +17,17 @@ const AiMoodPlaylist: React.FC = () => {
     setError("");
     setSongs([]);
     try {
-      const prompt = `Generate a playlist of 10 songs for a ${mood} mood. Return as JSON array: [{ \"title\": \"...\", \"artist\": \"...\" }]`;
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-          }),
-        }
-      );
-      const data = await response.json();
-      // Try to extract the playlist from Gemini's response
-      let playlist: Song[] = [];
-      try {
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-        playlist = JSON.parse(text);
-      } catch (e) {
-        setError("Could not parse Gemini response. Try again.");
-        setLoading(false);
-        return;
+      const playlist = await generatePlaylistFromMood(mood);
+      if (playlist && playlist.songs) {
+        setSongs(playlist.songs);
+      } else {
+        setError("Could not generate playlist for this mood.");
       }
-      setSongs(playlist);
-    } catch (e) {
-      setError("Failed to fetch playlist. Please try again.");
+    } catch (err) {
+      setError("Error generating playlist.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   return (
